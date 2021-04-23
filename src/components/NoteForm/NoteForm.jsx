@@ -7,6 +7,7 @@ class NoteForm extends Component
     constructor(props)
     {
         super(props);
+        
         this.title = "";
         this.text = "";
     }

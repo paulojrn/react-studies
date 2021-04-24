@@ -7,9 +7,27 @@ class NoteForm extends Component
     constructor(props)
     {
         super(props);
-        
+
         this.title = "";
         this.text = "";
+        this.category = "";
+        this.state = {categories: []};
+        this.newCategories = this.newCategories.bind(this)
+    }
+
+    componentDidMount()
+    {
+        this.props.categories.subscribe(this.newCategories);
+    }
+
+    componentWillUnmount()
+    {
+        this.props.categories.unsubscribe(this.newCategories);
+    }
+
+    newCategories(categories)
+    {
+        this.setState({...this.state, categories});
     }
 
     handlerTitleChange(event)
@@ -24,11 +42,17 @@ class NoteForm extends Component
         this.text = event.target.value;
     }
 
+    handlerCategoryChange(event)
+    {
+        event.stopPropagation();
+        this.category = event.target.value;
+    }
+
     createNote(event)
     {
         event.preventDefault();
         event.stopPropagation();
-        this.props.createNote(this.title, this.text);
+        this.props.createNote(this.title, this.text, this.category);
     }
     
     render()
@@ -38,6 +62,18 @@ class NoteForm extends Component
                 className="form-cadastro"
                 onSubmit={this.createNote.bind(this)}
             >
+                <select
+                    className="form-cadastro_input"
+                    onChange={this.handlerCategoryChange.bind(this)}
+                >
+                    <option>Sem categoria</option>
+
+                    {this.state.categories.map((category, index) => {
+                        return(
+                            <option key={index}>{category}</option>
+                        );
+                    })}
+                </select>
                 <input
                     type="text"
                     placeholder="Informe o título"

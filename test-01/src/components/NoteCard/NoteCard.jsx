@@ -18,6 +18,7 @@ class NoteCard extends Component
             <section key={this.props.note.id} className="card-nota">
                 <header className="card-nota_cabecalho">
                     <h3 className="card-nota_titulo">{this.props.note.title}</h3>
+                    <h4>{this.props.note.category}</h4>
                     <DeleteSVG onClick={this.deleteNote.bind(this)} />
                 </header>
                 <p className="card-nota_texto">{this.props.note.text}</p>

@@ -1,0 +1,2 @@
+sudo npx create-react-app name
+sudo docker run -it -d --rm -v /home/pauloj/applications/react/tests/test-02/:/home/react -p 3000:3000 node npm start

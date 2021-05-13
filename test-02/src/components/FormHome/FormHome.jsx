@@ -1,114 +1,47 @@
-import {useState} from "react";
-import { Button, FormControlLabel, Switch, TextField } from "@material-ui/core";
+import { Step, StepLabel, Stepper, Typography } from "@material-ui/core";
+import { useEffect, useState } from "react";
+import DeliveryData from "./DeliveryData";
+import PersonalData from "./PersonalData";
+import UserData from "./UserData";
 
 function FormHome ({sendFormData, validateCpf})
 {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [formData, setFormData] = useState({});
 
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("");
-    const [cpf, setCpf] = useState("");
-    const [onsale, setOnsale] = useState(true);
-    const [news, setNews] = useState(true);
-    const [error, setError] = useState({cpf: {
-        valid: true,
-        text: ""
-    }});
+    useEffect(() => {
+        if (currentStep === (componentsArray.length -1)) {
+            sendFormData(formData);
+        }        
+    });
+
+    let nextStep = () => {setCurrentStep(currentStep + 1);};
+    let collectData = (data) => {setFormData({...formData, ...data}); nextStep();}
+
+    let component = <Typography>Ocorreu um erro</Typography>;
+    let componentsArray = [
+        <UserData collectData={collectData} />,
+        <PersonalData collectData={collectData} validateCpf={validateCpf}/>,
+        <DeliveryData collectData={collectData}/>,
+        <Typography variant="h5">Obrigado pelo cadastro</Typography>
+    ];
+
+    if (currentStep <= (componentsArray.length - 1)) {
+        component = componentsArray[currentStep];
+        
+    }
 
     return (
-        <form
-            onSubmit={(event) => {
-                event.preventDefault();
-                sendFormData({
-                    name, surname, cpf, onsale, news
-                });
-            }}
-        >
+        <>
+            <Stepper activeStep={currentStep}>
+                <Step><StepLabel>Login</StepLabel></Step>
+                <Step><StepLabel>Pessol</StepLabel></Step>
+                <Step><StepLabel>Entrega</StepLabel></Step>
+                <Step><StepLabel>Finalização</StepLabel></Step>
+            </Stepper>
 
-            <TextField
-                id="form-nome" 
-                label="Nome"
-                variant="outlined"
-                margin="normal"
-                value={name}
-                onChange={(event) => {
-                    let nameTmp = event.target.value.trim();
-                    let nameMaxSize = 10;
-
-                    if (nameTmp.length >= nameMaxSize) {
-                        nameTmp = nameTmp.substr(0, nameMaxSize);
-                    }
-
-                    setName(nameTmp);
-                }}
-                fullWidth
-            />
-
-            <TextField 
-                id="form-sobrenome" 
-                label="Sobrenome" 
-                variant="outlined" 
-                margin="normal" 
-                value={surname}
-                onChange={(event) => {
-                    setSurname(event.target.value);
-                }}
-                fullWidth
-            />
-
-            <TextField 
-                id="form-cpf" 
-                label="CPF" 
-                variant="outlined" 
-                margin="normal"
-                value={cpf}
-                error={!error.cpf.valid}
-                helperText={error.cpf.text}
-                onChange={(event) => {
-                    setCpf(event.target.value);
-                }}
-                onBlur={(event) => {
-                    let validate = validateCpf(event.target.value);
-
-                    setError({cpf: validate});
-                }}
-                fullWidth
-            />
-
-            <FormControlLabel 
-                label="Promoções" 
-                control={
-                    <Switch
-                        name="onsale"
-                        checked={onsale}
-                        color="primary"
-                        onChange={(event) => {
-                            setOnsale(event.target.checked);
-                        }}
-                    />
-                }
-            />
-            
-            <FormControlLabel 
-                label="Novidades"
-                control={
-                    <Switch
-                        name="news"
-                        checked={news}
-                        color="primary"
-                        onChange={(event) => {
-                            setNews(event.target.checked);
-                        }}
-                    />
-                }
-            />            
-
-            <Button
-                type="submit" 
-                variant="contained" 
-                color="primary">
-                    Cadastrar
-            </Button>
-        </form>
+            {component}
+        </>
     );
 }
 

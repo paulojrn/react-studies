@@ -1,29 +1,59 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button, FormControlLabel, Switch, TextField } from "@material-ui/core";
+import ContextValidation from "../../validations/ContextValidation";
 
-function PersonalData ({collectData, validateCpf})
+function PersonalData ({collectData})
 {
-
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [cpf, setCpf] = useState("");
     const [onsale, setOnsale] = useState(true);
     const [news, setNews] = useState(true);
-    const [error, setError] = useState({cpf: {
-        valid: true,
-        text: ""
-    }});
+    const [errors, setErrors] = useState({
+        cpf: {valid: true, text: ""},
+        name: {valid: true, text: ""}
+    });
+
+    const validations = useContext(ContextValidation);
+
+    function validateFields (event)
+    {
+        const {name, value} = event.target;
+        const validate = validations[name](value);
+        const errorState = {...errors};
+        errorState[name] = validate;
+
+        setErrors(errorState);
+    }
+
+    function hasErrors ()
+    {
+        let invalid = false;
+
+        for (let error in errors) {
+            if (!errors[error].valid) {
+                invalid = true;
+                break;
+            }
+        }
+
+        return invalid;
+    }
 
     return (
         <form
             onSubmit={(event) => {
                 event.preventDefault();
-                collectData({name, surname, cpf, onsale, news});
+
+                if (!hasErrors()) {
+                    collectData({name, surname, cpf, onsale, news});
+                }
             }}
         >
 
             <TextField
-                id="form-nome" 
+                id="name"
+                name="name"
                 label="Nome"
                 variant="outlined"
                 margin="normal"
@@ -38,11 +68,14 @@ function PersonalData ({collectData, validateCpf})
 
                     setName(nameTmp);
                 }}
+                error={!errors.name.valid}
+                helperText={errors.name.text}
+                onBlur={validateFields}
                 fullWidth
             />
 
             <TextField 
-                id="form-sobrenome" 
+                id="surname" 
                 label="Sobrenome" 
                 variant="outlined" 
                 margin="normal" 
@@ -54,21 +87,18 @@ function PersonalData ({collectData, validateCpf})
             />
 
             <TextField 
-                id="form-cpf" 
+                id="cpf"
+                name="cpf"
                 label="CPF" 
                 variant="outlined" 
                 margin="normal"
                 value={cpf}
-                error={!error.cpf.valid}
-                helperText={error.cpf.text}
+                error={!errors.cpf.valid}
+                helperText={errors.cpf.text}
                 onChange={(event) => {
                     setCpf(event.target.value);
                 }}
-                onBlur={(event) => {
-                    let validate = validateCpf(event.target.value);
-
-                    setError({cpf: validate});
-                }}
+                onBlur={validateFields}
                 fullWidth
             />
 
@@ -104,7 +134,7 @@ function PersonalData ({collectData, validateCpf})
                 type="submit" 
                 variant="contained" 
                 color="primary">
-                    Cadastrar
+                    Próximo
             </Button>
         </form>
     );

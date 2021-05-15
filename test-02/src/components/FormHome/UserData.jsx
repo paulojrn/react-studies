@@ -1,15 +1,49 @@
 import { Button, TextField } from "@material-ui/core";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import ContextValidation from "../../validations/ContextValidation";
 
 function UserData ({collectData})
 {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState({password: {
+        valid: true,
+        text: ""
+    }});
+
+    const validations = useContext(ContextValidation);
+
+    function validateFields (event)
+    {
+        const {name, value} = event.target;
+        const validate = validations[name](value);
+        const errorState = {...errors};
+        errorState[name] = validate;
+
+        setErrors(errorState);
+    }
+
+    function hasErrors ()
+    {
+        let invalid = false;
+
+        for (let error in errors) {
+            if (!errors[error].valid) {
+                invalid = true;
+                break;
+            }
+        }
+
+        return invalid;
+    }
 
     return(
         <form onSubmit={(event) => {
             event.preventDefault();
-            collectData({email, password});
+            
+            if (!hasErrors()) {
+                collectData({email, password});
+            }            
         }}>
             <TextField
                 id="email" 
@@ -27,6 +61,7 @@ function UserData ({collectData})
 
             <TextField
                 id="password"
+                name="password"
                 label="Senha"
                 type="password"
                 variant="outlined"
@@ -35,12 +70,15 @@ function UserData ({collectData})
                 onChange={(event) => {
                     setPassword(event.target.value);
                 }}
+                onBlur={validateFields}
+                error={!errors.password.valid}
+                helperText={errors.password.text}
                 required
                 fullWidth
             />
             
             <Button type="submit" variant="contained" color="primary">
-                Cadastrar
+                Próximo
             </Button>
         </form>
     );

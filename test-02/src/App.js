@@ -2,6 +2,8 @@ import { Container, Typography } from '@material-ui/core';
 import { Component } from 'react';
 import './App.css';
 import FormHome from './components/FormHome/FormHome';
+import {validateCpf, validatePassword} from "./validations/comum";
+import ContextValidation from './validations/ContextValidation';
 
 class App extends Component {
   render()
@@ -18,7 +20,15 @@ class App extends Component {
               Formulário de cadastro
           </Typography>
 
-          <FormHome sendFormData={sendFormData} validateCpf={validateCpf}/>
+          <ContextValidation.Provider value={{
+            cpf: validateCpf,
+            password: validatePassword,
+            name: validatePassword
+          }}>
+          
+            <FormHome sendFormData={sendFormData}/>
+          </ContextValidation.Provider>
+          
           
       </Container>
     );
@@ -28,17 +38,6 @@ class App extends Component {
 function sendFormData (data)
 {
   console.log(data);
-}
-
-function validateCpf (cpf) 
-{
-  let validate = {valid: true, text: ""};
-
-  if (cpf.length !== 11) {
-      validate = {valid: false, text: "CPF deve ter 11 dígitos"};
-  }
-
-  return validate;
 }
 
 export default App;

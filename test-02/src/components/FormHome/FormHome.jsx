@@ -4,7 +4,7 @@ import DeliveryData from "./DeliveryData";
 import PersonalData from "./PersonalData";
 import UserData from "./UserData";
 
-function FormHome ({sendFormData, validateCpf})
+function FormHome ({sendFormData})
 {
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({});
@@ -20,8 +20,8 @@ function FormHome ({sendFormData, validateCpf})
 
     let component = <Typography>Ocorreu um erro</Typography>;
     let componentsArray = [
-        <UserData collectData={collectData} />,
-        <PersonalData collectData={collectData} validateCpf={validateCpf}/>,
+        <UserData collectData={collectData}/>,
+        <PersonalData collectData={collectData}/>,
         <DeliveryData collectData={collectData}/>,
         <Typography variant="h5">Obrigado pelo cadastro</Typography>
     ];

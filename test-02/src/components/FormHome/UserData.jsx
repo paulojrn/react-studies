@@ -1,41 +1,14 @@
 import { Button, TextField } from "@material-ui/core";
 import { useState, useContext } from "react";
 import ContextValidation from "../../validations/ContextValidation";
+import useErrors from "../../customHooks/useErrors";
 
 function UserData ({collectData})
 {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState({password: {
-        valid: true,
-        text: ""
-    }});
-
     const validations = useContext(ContextValidation);
-
-    function validateFields (event)
-    {
-        const {name, value} = event.target;
-        const validate = validations[name](value);
-        const errorState = {...errors};
-        errorState[name] = validate;
-
-        setErrors(errorState);
-    }
-
-    function hasErrors ()
-    {
-        let invalid = false;
-
-        for (let error in errors) {
-            if (!errors[error].valid) {
-                invalid = true;
-                break;
-            }
-        }
-
-        return invalid;
-    }
+    const [errors, validateFields, hasErrors] = useErrors(validations);
 
     return(
         <form onSubmit={(event) => {

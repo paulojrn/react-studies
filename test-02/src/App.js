@@ -21,10 +21,10 @@ class App extends Component {
           </Typography>
 
           <ContextValidation.Provider value={{
-            cpf: validateCpf,
-            password: validatePassword,
-            name: validatePassword
-          }}>
+              cpf: validateCpf,
+              password: validatePassword,
+              name: validatePassword
+            }}>
           
             <FormHome sendFormData={sendFormData}/>
           </ContextValidation.Provider>

@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { Button, FormControlLabel, Switch, TextField } from "@material-ui/core";
 import ContextValidation from "../../validations/ContextValidation";
+import useErrors from "../../customHooks/useErrors";
 
 function PersonalData ({collectData})
 {
@@ -9,36 +10,8 @@ function PersonalData ({collectData})
     const [cpf, setCpf] = useState("");
     const [onsale, setOnsale] = useState(true);
     const [news, setNews] = useState(true);
-    const [errors, setErrors] = useState({
-        cpf: {valid: true, text: ""},
-        name: {valid: true, text: ""}
-    });
-
     const validations = useContext(ContextValidation);
-
-    function validateFields (event)
-    {
-        const {name, value} = event.target;
-        const validate = validations[name](value);
-        const errorState = {...errors};
-        errorState[name] = validate;
-
-        setErrors(errorState);
-    }
-
-    function hasErrors ()
-    {
-        let invalid = false;
-
-        for (let error in errors) {
-            if (!errors[error].valid) {
-                invalid = true;
-                break;
-            }
-        }
-
-        return invalid;
-    }
+    const [errors, validateFields, hasErrors] = useErrors(validations);
 
     return (
         <form

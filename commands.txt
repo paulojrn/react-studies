@@ -1,2 +1,3 @@
 sudo npx create-react-app name
-sudo docker run -it -d --rm -v /home/pauloj/applications/react/tests/test-02/:/home/react -p 3000:3000 node npm start
+sudo docker run -d --rm -v /home/pauloj/studies/react/alura/class-components-approach/:/home/react -p 3000:3000 node npm start
+sudo docker run -d --rm -v /home/pauloj/studies/react/alura/function-components-approach/:/home/react -p 3000:3000 node npm start
